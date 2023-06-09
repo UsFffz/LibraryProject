@@ -4,6 +4,7 @@ package com.example.librarytest.aop.log;
 import com.example.librarytest.aop.anotation.UserLog;
 import com.example.librarytest.pojo.entity.AopEntity;
 import com.example.librarytest.util.LoginUtils;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -51,19 +52,9 @@ public class LogService {
                  .setUserAgent(userAgent);
         mongoTemplate.save(aopEntity,"userlog");
         Map<String,Object> map = (Map<String, Object>) pjd.proceed();
-        map.forEach((k,v)-> System.out.println(k + " ______________" + v));
-        String s = String.valueOf(map.get("message"));
-        String message = s.substring(2,4);
-        System.out.println(message);
-        if (!message.equals("成功")){
-            aopEntity.setDate(getNowDateStr())
-                     .setResult(2);
-            mongoTemplate.save(aopEntity,"userlog");
-            return map;
-        }
-        aopEntity.setDate(getNowDateStr())
-                 .setResult(1);
-        mongoTemplate.save(aopEntity,"userlog");
+        Gson gson = new Gson();
+        String kafkaMap =  gson.toJson(aopEntity);
+        kafkaTemplate.send("KafKaUserLog",kafkaMap);
         return map;
     }
 
