@@ -2,7 +2,6 @@ package com.example.librarytest.kafka;
 
 
 import com.example.librarytest.pojo.entity.AopEntity;
-import com.example.librarytest.pojo.entity.KafkaSuccess;
 import com.google.gson.Gson;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
