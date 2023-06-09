@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.librarytest.mapper.IntegralMapper">
+
+<update id="userAddIntegral">
+    update user_integral set user_integral.integral =
+        (
+         select b.integral
+         from user a
+         left join user_integral b on a.userid = b.userid
+         where a.userid = #{userid})
+         + #{integral}
+    where
+    userid = #{userid}
+</update>
+
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.librarytest.mapper.UserLoginMapper">
+    <select id="userLoginUser" resultType="com.example.librarytest.pojo.entity.UserLogin">
+        select userid userID,username,password,state userState from user where username =#{username};
+    </select>
+
+    <select id="selectUserRole" resultType="java.lang.String">
+        select rolename from userrole a left join role b on a.roleid = b.roleid where a.userid = #{userid};
+    </select>
+
+    <select id="selectUserState" resultType="java.lang.Integer">
+        select state from user where userid = #{userid};
+    </select>
+
+    <update id="freezeUser">
+        update user set state = 0 from user where userid = #{userid};
+    </update>
+</mapper>

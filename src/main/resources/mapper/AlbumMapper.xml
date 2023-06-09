@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.librarytest.mapper.TestPlayMapper">
+
+    <select id="selectAllBook" resultType="com.example.librarytest.pojo.entity.BookTestRabbit">
+        select id bookId,name,num,message,inventory,sale from book;
+    </select>
+
+    <select id="selectInventory" resultType="java.lang.Integer">
+        select inventory from book where id =#{id};
+    </select>
+
+    <update id="buyBook">
+        update book set num=num+1,inventory=inventory-1 where id =#{id};
+    </update>
+
+    <insert id="insertBook">
+        insert into book(id,name,num,message,inventory,sale) values(null,#{name},#{num},#{message},#{inventory},#{sale});
+    </insert>
+
+    <select id="selectBookById" resultType="com.example.librarytest.pojo.entity.BookTestRabbit">
+        select id bookId,name,num,message,inventory,sale from book where id = #{id};
+    </select>
+
+    <select id="selectBookByIdEntity" resultType="com.example.librarytest.pojo.entity.BookEntity">
+        select id bookId,name,num,message,inventory,sale,integral from book where id = #{id};
+    </select>
+
+</mapper>

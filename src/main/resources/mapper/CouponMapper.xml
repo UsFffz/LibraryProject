@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.librarytest.mapper.CouponMapper">
+
+    <select id="selectCouponEntity" resultType="com.example.librarytest.pojo.entity.CouponEntity">
+        select
+               a.coupon_id couponId,
+               a.coupon_name couponName,
+               b.num
+        from coupon a
+        left join user_coupon b on a.coupon_id = b.coupon_id
+        where userid = #{userid}
+    </select>
+
+    <select id="selectCouponById" resultType="com.example.librarytest.pojo.entity.CouponEntity">
+        select
+            a.coupon_id couponId,
+            a.coupon_name couponName,
+            b.num,
+            c.coupon_effect couponEffect
+        from coupon a
+        left join user_coupon b on a.coupon_id = b.coupon_id
+        left join couponeffect c on a.coupon_id = c.coupon_id
+        where userid = #{userid} and a.coupon_id = #{couponId}
+    </select>
+    
+    <update id="updateCouponNum">
+        UPDATE user_coupon set num =
+            (
+                select num from user_coupon where userid =#{userid} and coupon_id=#{couponId}) - 1
+        where userid = #{userid} and coupon_id=#{couponId};
+    </update>
+
+</mapper>
