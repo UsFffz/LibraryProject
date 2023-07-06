@@ -30,4 +30,10 @@ public interface CouponMapper {
      * 当购买成功后削减对应优惠卷
      */
     Integer updateCouponNum(Long userid,Integer couponId);
+
+
+    /**
+     * 给指定用户添加优惠劵
+     */
+    Integer giveCouponToUser(Integer couponid,Long userid);
 }

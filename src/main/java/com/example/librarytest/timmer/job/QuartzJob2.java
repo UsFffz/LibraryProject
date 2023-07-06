@@ -29,8 +29,6 @@ public class QuartzJob2 implements Job {
     @Autowired
     private TestPlayMapper testPlayMapper;
 
-    @Autowired
-    private KafkaTemplate<String,String> kafkaTemplate;
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -51,9 +49,7 @@ public class QuartzJob2 implements Job {
                          .setBookName(bookTestRabbit.getName())
                          .setInventory(bookTestRabbit.getInventory())
                          .setBookId(bookId);
-                Gson gson = new Gson();
-                String message = gson.toJson(kafKaWarn);
-                kafkaTemplate.send("kafkawarn",message);
+                rabbitTemplate.convertSendAndReceive(RabbitConfig.STOCK_EX_TWO,RabbitConfig.STOCK_ROUT_FOUR,kafKaWarn);
                 bookIdList.add(bookId);
             }else if (inventory <= 0){
                 System.out.println("该书已告罄");
@@ -64,8 +60,8 @@ public class QuartzJob2 implements Job {
                          .setInventory(0)
                          .setWarnMessage(WarnMessage.WARN_MESSAGE_INSUFFICIENT);
                 Gson gson = new Gson();
-                String message = gson.toJson(kafKaWarn);
-                kafkaTemplate.send("kafkawarn",message);
+//                String message = gson.toJson(kafKaWarn);
+//                kafkaTemplate.send("kafkawarn",message);
                 throw new NullPointerException();
             }else {
                 bookIdList.add(bookId);

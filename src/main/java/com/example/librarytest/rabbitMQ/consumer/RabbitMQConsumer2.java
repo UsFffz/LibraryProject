@@ -1,4 +1,4 @@
-package com.example.librarytest.timmer.Consumer;
+package com.example.librarytest.rabbitMQ.consumer;
 
 
 import com.example.librarytest.codenum.WarnEnum;
@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +26,7 @@ public class RabbitMQConsumer2 {
     private TestPlayMapper testPlayMapper;
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private MongoTemplate mongoTemplate;
 
     @Autowired
     private BookBuySuccess bookBuySuccess;
@@ -44,10 +45,9 @@ public class RabbitMQConsumer2 {
                     .setWarnMessage(WarnMessage.WARN_MESSAGE_ERROR)
                     .setInventory(bookTestRabbit.getInventory())
                     .setBookName(bookTestRabbit.getName());
-            Gson gson = new Gson();
-            String message = gson.toJson(kafKaWarn);
-            System.out.println("准备发送到kafka到警告日志中");
-            kafkaTemplate.send("kafkawarn", message);
+            String mongoName = "niuBi";
+            System.out.println("准备发送到mongo中进行记录");
+            mongoTemplate.save(kafKaWarn,mongoName);
             return;
         } else {
             System.out.println("准备发送到kafka录入成功日志");

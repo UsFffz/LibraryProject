@@ -24,12 +24,17 @@
         left join couponeffect c on a.coupon_id = c.coupon_id
         where userid = #{userid} and a.coupon_id = #{couponId}
     </select>
-    
+
     <update id="updateCouponNum">
         UPDATE user_coupon set num =
-            (
-                select num from user_coupon where userid =#{userid} and coupon_id=#{couponId}) - 1
+            (select num from user_coupon where userid =#{userid} and coupon_id=#{couponId}) - 1
         where userid = #{userid} and coupon_id=#{couponId};
+    </update>
+
+    <update id="giveCouponToUser">
+       update user_coupon setnum = (
+           select num from user_coupon where userid =#{userid} and coupon_id =#{coupon_id}) + 1
+       where userid =#{userid} and coupon_id =#{coupon_id};
     </update>
 
 </mapper>

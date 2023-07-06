@@ -23,7 +23,7 @@ public class Knife4jConfiguration {
     /**
      * 【重要】指定Controller包路径
      */
-    private String basePackage = "com.example.totaldemo.controller";
+    private String basePackage = "com.example.librarytest.controller";
     /**
      * 分组名称
      */
@@ -35,11 +35,11 @@ public class Knife4jConfiguration {
     /**
      * 标题
      */
-    private String title = "周大漂亮的小店--自恋图书馆";
+    private String title = "图书馆";
     /**
      * 简介
      */
-    private String description = "专门卖点周大漂亮的书,主打的就是一手自恋与欣赏";
+    private String description = "瞎tm卖书,就是卖";
     /**
      * 服务条款URL
      */
@@ -47,7 +47,7 @@ public class Knife4jConfiguration {
     /**
      * 联系人
      */
-    private String contactName = "樊大帅气";
+    private String contactName = "帅逼";
     /**
      * 联系网址
      */
@@ -55,7 +55,7 @@ public class Knife4jConfiguration {
     /**
      * 联系邮箱
      */
-    private String contactEmail = "fzl17713324195@163.com";
+    private String contactEmail = "fXXXXXXXXXXX@163.com";
     /**
      * 版本号
      */

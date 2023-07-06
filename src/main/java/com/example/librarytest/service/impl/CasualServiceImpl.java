@@ -2,6 +2,7 @@ package com.example.librarytest.service.impl;
 
 import com.example.librarytest.codenum.WarnEnum;
 import com.example.librarytest.codenum.WarnMessage;
+import com.example.librarytest.config.RabbitConfig;
 import com.example.librarytest.ex.ServiceCode;
 import com.example.librarytest.ex.ServiceException;
 import com.example.librarytest.mapper.CouponMapper;
@@ -18,7 +19,9 @@ import com.example.librarytest.util.GetAuthenticationInfo;
 import com.example.librarytest.web.JsonResult;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +40,7 @@ public class CasualServiceImpl implements CasualService {
     private TestPlayMapper testPlayMapper;
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private BookBuySuccess bookBuySuccess;
@@ -69,6 +72,11 @@ public class CasualServiceImpl implements CasualService {
         BigDecimal price = bookEntity.getSale();
         if (couponId != null) {
             CouponEntity couponEntity = couponMapper.selectCouponById(userid, couponId);
+            Integer couponNum = couponEntity.getNum();
+            if (couponNum <= 0 ){
+                map.put("message","您未拥有该优惠卷!");
+                return map;
+            }
             if (couponEntity == null) {
                 map.put("message", "您未拥有该优惠卷!");
                 return map;
@@ -111,9 +119,7 @@ public class CasualServiceImpl implements CasualService {
                     .setWarnMessage(WarnMessage.WARN_MESSAGE_ERROR)
                     .setBookName(bookEntity.getName())
                     .setInventory(bookEntity.getInventory());
-            Gson gson = new Gson();
-            String message = gson.toJson(kafKaWarn);
-            kafkaTemplate.send("kafkawarn", message);
+            rabbitTemplate.convertSendAndReceive(RabbitConfig.STOCK_EX_TWO,RabbitConfig.STOCK_ROUT_FOUR,kafKaWarn);
             throw new ServiceException(ServiceCode.ERR_UPDATE,"因未知原因购买失败,请手动查看失败原因!");
         }
         Integer i = testPlayMapper.buyBook(bookId);
@@ -124,9 +130,7 @@ public class CasualServiceImpl implements CasualService {
                     .setWarnMessage(WarnMessage.WARN_MESSAGE_ERROR)
                     .setBookName(bookEntity.getName())
                     .setInventory(bookEntity.getInventory());
-            Gson gson = new Gson();
-            String message = gson.toJson(kafKaWarn);
-            kafkaTemplate.send("kafkawarn", message);
+            rabbitTemplate.convertSendAndReceive(RabbitConfig.STOCK_EX_TWO,RabbitConfig.STOCK_ROUT_FOUR,kafKaWarn);
             map.put("message", "因未知原因购买失败,请稍后再试.");
             return map;
         }
@@ -140,9 +144,7 @@ public class CasualServiceImpl implements CasualService {
                         .setWarnMessage(WarnMessage.WARN_UPDATE_COUPON)
                         .setBookName(bookEntity.getName())
                         .setInventory(bookEntity.getInventory());
-                Gson gson = new Gson();
-                String message = gson.toJson(kafKaWarn);
-                kafkaTemplate.send("kafkawarn", message);
+                rabbitTemplate.convertSendAndReceive(RabbitConfig.STOCK_EX_TWO,RabbitConfig.STOCK_ROUT_FOUR,kafKaWarn);
                 map.put("message", "因未知原因购买失败,请稍后再试.");
                 return map;
             }

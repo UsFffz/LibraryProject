@@ -13,6 +13,7 @@ public enum WarnEnum {
     }
 
     private String name;
+
     private Integer num;
 
     public String getName() {

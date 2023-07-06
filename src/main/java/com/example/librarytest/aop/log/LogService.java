@@ -2,6 +2,7 @@ package com.example.librarytest.aop.log;
 
 
 import com.example.librarytest.aop.anotation.UserLog;
+import com.example.librarytest.config.RabbitConfig;
 import com.example.librarytest.pojo.entity.AopEntity;
 import com.example.librarytest.util.LoginUtils;
 import com.google.gson.Gson;
@@ -10,6 +11,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -27,10 +29,12 @@ import java.util.TimeZone;
 @Component
 @Slf4j
 public class LogService {
+
     @Autowired
-    private KafkaTemplate<String,String> kafkaTemplate;
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    private RabbitTemplate rabbitTemplate;
+
+
+
 
     @Pointcut("@annotation(com.example.librarytest.aop.anotation.UserLog)")
     private void log(){
@@ -50,11 +54,8 @@ public class LogService {
                  .setOperate(userLog.value())
                  .setRemoteAddr(remoteAddr)
                  .setUserAgent(userAgent);
-        mongoTemplate.save(aopEntity,"userlog");
         Map<String,Object> map = (Map<String, Object>) pjd.proceed();
-        Gson gson = new Gson();
-        String kafkaMap =  gson.toJson(aopEntity);
-        kafkaTemplate.send("KafKaUserLog",kafkaMap);
+        rabbitTemplate.convertSendAndReceive(RabbitConfig.STOCK_EX,RabbitConfig.STOCK_ROUT_FIVE,aopEntity);
         return map;
     }
 

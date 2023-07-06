@@ -1,4 +1,4 @@
-package com.example.librarytest.timmer.Consumer;
+package com.example.librarytest.rabbitMQ.consumer;
 
 
 import com.example.librarytest.config.RabbitConfig;
